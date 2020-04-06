@@ -22,7 +22,8 @@ The **purpose** of this project is to add guests to a "Vip" list and inform them
 	* [How to Configure/Run the Server](#configureserver)
 	* [How to Configure the JPA + MySQL](#configurejpa)
 2. [Creating the Entity](#entity)
- 
+3. [Creating the Repository](#repository)
+4. [Creating the Service](#service)
 
 ## <a name="boot"></a>Starting the project - Spring Boot
 ###  <a name="why"></a>Why to use Spring boot? 
@@ -119,3 +120,38 @@ public class Configuration {
 }
 ```
 ## <a name="entity"></a>Creating the Entity
+That will be a simple entity, called Guest.
+1. Creates the Class Guest, into the package **_com.vipguestlist.model_**
+```java
+@Entity
+public class Guest {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	private String name, email, phone;
+
+	//Getters and Setters
+}
+```
+## <a name="repository"></a>Creating the Repository
+1. Creates the **Interface** GuestRepository that extends **CrudRepository**, into the package **_com.vipguestlist.repository_** , passing the Guest Class, and the type of Id used (long)
+```java
+public interface GuestRepository extends CrudRepository<Guest, Long>{}
+```
+* Extending this interface, allows us to use a lot of pre-established methods, such as:
+	*  save();
+	* saveAll();
+	* findOne();
+	* findAll();
+	* count();
+	* delete();
+	* existsById();
+* If necessary, it's possible to create methods, such as the **"findByName"** method that we will implement, which will allow us to find a list of guests by the name:
+ ```java
+public interface GuestRepository extends CrudRepository<Guest, Long>{
+	List<Guest> findByName(String name); 
+}
+```
+
+## <a name="service"></a>Creating the Service
