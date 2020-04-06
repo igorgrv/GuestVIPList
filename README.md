@@ -21,11 +21,14 @@ The **purpose** of this project is to add guests to a "Vip" list and inform them
 	* [How to use?](#howto)
 	* [How to Configure/Run the Server](#configureserver)
 	* [How to Configure the JPA + MySQL](#configurejpa)
-2. [Creating the Entity](#entity)
-3. [Creating the Repository](#repository)
-4. [Creating the Service](#service)
-5. [Creating the Controller](#controller)
-
+2. [Creating the MVC](#mvc)
+	* [Entity](#entity)
+	* [Views - Thymeleaf](#views)
+	* [Repository](#repository)
+	* [Service](#service)
+	* [Controller](#controller)
+3. [Spring DevTools + LiveReload Plugin](#devtools)
+4. [Spring Initializer](#initializer)
 ## <a name="boot"></a>Starting the project - Spring Boot
 ###  <a name="why"></a>Why to use Spring boot? 
 The main utility of **Spring Boot** is at:
@@ -120,7 +123,8 @@ public class Configuration {
 	}
 }
 ```
-## <a name="entity"></a>Creating the Entity
+## <a name="mvc"></a>MVC
+## <a name="entity"></a>Entity
 That will be a simple entity, called Guest.
 1. Creates the Class Guest, into the package **_com.vipguestlist.model_**
 ```java
@@ -146,7 +150,16 @@ public class Guest {
 	//Getters and Setters
 }
 ```
-## <a name="repository"></a>Creating the Repository
+## <a name="views"></a>Views - Thymeleaf
+
+parte 2
+por convenção, os templates sao colocados dentro da pasta main/resources/templates
+
+arquivos como Bootstrap, jQuery, na pasta resources/static
+
+neste projeto invés da jsp, é utilizado o thymeleaf,expression language padrão do spring. necessário adicionar a dependência no pom
+
+## <a name="repository"></a>Repository
 Creates the **Interface** GuestRepository that extends **CrudRepository**, into the package **_com.vipguestlist.repository_** , passing the Guest Class, and the type of Id used (long)
 ```java
 public interface GuestRepository extends CrudRepository<Guest, Long>{}
@@ -166,7 +179,7 @@ public interface GuestRepository extends CrudRepository<Guest, Long>{
 }
 ```
 
-## <a name="service"></a>Creating the Service
+## <a name="service"></a>Service
 
 By default, the controller layer should not access business rules, in other words, the controller should not access the repository, but rather a "service", therefore:
 
@@ -188,4 +201,18 @@ public class GuestService {
 	}
 }
 ```
-## <a name="controller"></a>Creating the Controller
+
+## <a name="controller"></a>Controller
+
+
+## <a name="devtools"></a> Spring DevTools + LiveReload Plugin
+
+Spring DevTools + LiveRealod chrome
+O spring DevTools é utilizado para fazer as atualizações automaticamente no servidor, tornando mais rápido os refreshs, pois ele irá apenas atualizar o que foi alterado, não a aplicação toda (hot deploy)
+O liveReload é um plugin que vem para complementar, fazendo o refresh da página automaticamente!
+
+
+## <a name="initializer"></a> Spring Initializer
+
+Spring Initializer
+O spring initializer facilita a criação dos projetos, de que selecionamos o que precisamos e ele configura o pom.xml e classes
