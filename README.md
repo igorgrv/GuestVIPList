@@ -24,6 +24,7 @@ The **purpose** of this project is to add guests to a "Vip" list and inform them
 2. [Creating the Entity](#entity)
 3. [Creating the Repository](#repository)
 4. [Creating the Service](#service)
+5. [Creating the Controller](#controller)
 
 ## <a name="boot"></a>Starting the project - Spring Boot
 ###  <a name="why"></a>Why to use Spring boot? 
@@ -131,11 +132,22 @@ public class Guest {
 	private Long id;
 	private String name, email, phone;
 
+	/**
+	 * @deprecated hibernate only
+	 */
+	public Guest() {}
+	
+	public Guest(String name, String email, String phone) {
+		this.name = name;
+		this.email = email;
+		this.phone = phone;
+	}
+	
 	//Getters and Setters
 }
 ```
 ## <a name="repository"></a>Creating the Repository
-1. Creates the **Interface** GuestRepository that extends **CrudRepository**, into the package **_com.vipguestlist.repository_** , passing the Guest Class, and the type of Id used (long)
+Creates the **Interface** GuestRepository that extends **CrudRepository**, into the package **_com.vipguestlist.repository_** , passing the Guest Class, and the type of Id used (long)
 ```java
 public interface GuestRepository extends CrudRepository<Guest, Long>{}
 ```
@@ -155,3 +167,25 @@ public interface GuestRepository extends CrudRepository<Guest, Long>{
 ```
 
 ## <a name="service"></a>Creating the Service
+
+By default, the controller layer should not access business rules, in other words, the controller should not access the repository, but rather a "service", therefore:
+
+Creates the class **GuestService** , into the package **_com.vipguestlist.service_** , adding the methods that we will use;
+
+ ```java
+@Service
+public class GuestService {
+
+	@Autowired
+	private GuestRepository guestRepository;
+	
+	public Iterable<Guest> findAll(){
+		return guestRepository.findAll();
+	}
+	
+	public void save(Guest guest) {
+		guestRepository.save(guest);
+	}
+}
+```
+## <a name="controller"></a>Creating the Controller

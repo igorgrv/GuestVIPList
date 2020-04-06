@@ -13,7 +13,18 @@ public class Guest {
 	private Long id;
 	private String name, email, phone;
 
-	//Getters and Setters
+	/**
+	 * @deprecated hibernate only
+	 */
+	public Guest() {}
+	
+	public Guest(String name, String email, String phone) {
+		this.name = name;
+		this.email = email;
+		this.phone = phone;
+	}
+
+	// Getters and Setters
 	public Long getId() {
 		return id;
 	}
