@@ -23,10 +23,10 @@ The **purpose** of this project is to add guests to a "Vip" list and inform them
 	* [How to Configure the JPA + MySQL](#configurejpa)
 2. [Creating the MVC](#mvc)
 	* [Entity](#entity)
-	* [Views - Thymeleaf](#views)
 	* [Repository](#repository)
 	* [Service](#service)
 	* [Controller](#controller)
+	* [Views - Thymeleaf](#views)
 3. [Spring DevTools + LiveReload Plugin](#devtools)
 4. [Spring Initializer](#initializer)
 ## <a name="boot"></a>Starting the project - Spring Boot
@@ -60,8 +60,12 @@ The main utility of **Spring Boot** is at:
 2. Create a class with the **@SpringBootApplication** annotation and with a 'main method';
 3. Run the server using the _run_ method;
 4. Test, acessing `localhost:8080` and look if the "Whitelabel Error Page" appears;
-
 _by default, the port used is 8080 and the container server is tomcat_
+* @ComponentScan: is used to map the Controller/Service
+* @EntityScan: to map the Entity
+* @EnableJpaRepositories: to map the Repository
+
+
 ```java
 package com.vipguestlist.configuration;
 
@@ -69,6 +73,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@ComponentScan({"com.vipguestlist.controller", "com.vipguestlist.service"})
+@EntityScan({"com.vipguestlist.model"})
+@EnableJpaRepositories({"com.vipguestlist.repository"})
 public class Configuration {
 
 	public static void main(String[] args) {
@@ -150,14 +157,7 @@ public class Guest {
 	//Getters and Setters
 }
 ```
-## <a name="views"></a>Views - Thymeleaf
 
-parte 2
-por convenção, os templates sao colocados dentro da pasta main/resources/templates
-
-arquivos como Bootstrap, jQuery, na pasta resources/static
-
-neste projeto invés da jsp, é utilizado o thymeleaf,expression language padrão do spring. necessário adicionar a dependência no pom
 
 ## <a name="repository"></a>Repository
 Creates the **Interface** GuestRepository that extends **CrudRepository**, into the package **_com.vipguestlist.repository_** , passing the Guest Class, and the type of Id used (long)
@@ -203,15 +203,151 @@ public class GuestService {
 ```
 
 ## <a name="controller"></a>Controller
+```java
+@Controller
+public class GuestController {
 
+	@Autowired
+	private GuestService service;
+	
+	@GetMapping("/")
+	public String index() {
+		return "index";
+	}
 
+	@GetMapping("guestlist")
+	public ModelAndView guestList() {
+		ModelAndView mv = new ModelAndView("guestlist");
+		Iterable<Guest> guests = service.findAll();
+		mv.addObject("guests", guests);
+		return mv;
+	}
+	
+	@PostMapping("save")
+	public ModelAndView save(Guest guest) {
+		service.save(guest);
+		return new ModelAndView("redirect:guestlist");
+	}
+}
+```
+## <a name="views"></a>Views - Thymeleaf
+  
+In this project instead of jsp, **Thymeleaf** will be used, which is **Spring's default Expression Language**. 
+To use, it's necessary to add the dependency into the pom.xml:
+```xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+```
+* By convention, templates (HTML) are placed into the **_main/resources/templates_** 
+and resources, as Bootstrap, jQuery, into **_main/resources/static_**.
+
+To use the Thymeleaf, it's necessary to put insithe de .html, the code below. That way, we can use the tag "th".
+```html
+<html xmlns:th="http://www.thymeleaf.org">
+```
+### ForEach - Thymeleaf
+to use the "foreach" from the controller, just follow the code below:
+```html
+<tr th:each="guest : ${guests}">
+	<td><span th:text="${guest.name}"></span></td>
+	<td><span th:text="${guest.email}"></span></td>
+	<td><span th:text="${guest.phone}"></span></td>
+</tr>
+```
+
+---
+**index.html**
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>VIP List</title>
+	<link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="container" >
+			<div class="jumbotron" align="center" style="margin-top: 50px;">
+				<h1>Welcome to the VIP List</h1>
+				<div align="center">
+					<a href="guestlist" class="btn btn-lg btn-primary">Click to see the VIP Guest List!</a>
+				</div>
+			</div>
+		</div>
+	    
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	    <script src="/bootstrap/js/bootstrap.min.js"></script>
+	
+	</body>
+</html>
+```
+**guestlist.html**
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>VIP List</title>
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+	<div class="container">
+		<div id="listaDeConvidados">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Phone</th>
+					</tr>
+				</thead>
+				<tr th:each="guest : ${guests}">
+					<td><span th:text="${guest.name}"></span></td>
+					<td><span th:text="${guest.email}"></span></td>
+					<td><span th:text="${guest.phone}"></span></td>
+				</tr>
+			</table>
+		</div>
+		
+		<hr/>
+
+		<form action="save" method="post">
+			<div class="form-group">
+				<label for="name">Full name</label> 
+				<input type="text" class="form-control" id="name" name="name" placeholder="Name" />
+			</div>
+			<div class="form-group">
+				<label for="email">Email</label> 
+				<input type="email" class="form-control" id="email" name="email" placeholder="Email" />
+			</div>
+			<div class="form-group">
+				<label for="phone">Phone</label> 
+				<input type="text" class="form-control" id="phone" name="phone" placeholder="Phone" />
+			</div>
+			<button type="submit" class="btn btn-success">Invite</button>
+		</form>
+	</div>
+
+	<script 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
+```
 ## <a name="devtools"></a> Spring DevTools + LiveReload Plugin
 
 Spring DevTools + LiveRealod chrome
 O spring DevTools é utilizado para fazer as atualizações automaticamente no servidor, tornando mais rápido os refreshs, pois ele irá apenas atualizar o que foi alterado, não a aplicação toda (hot deploy)
 O liveReload é um plugin que vem para complementar, fazendo o refresh da página automaticamente!
-
-
+```xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-devtools</artifactId>
+	<optional>true</optional>
+</dependency>
+```
+[LiveReload - chrome](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei?hl=pt-BR)
 ## <a name="initializer"></a> Spring Initializer
 
 Spring Initializer
