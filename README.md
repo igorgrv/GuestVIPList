@@ -17,7 +17,6 @@ The **purpose** of this project is to add guests to a "Vip" list and inform them
 *  Thymeleaf;
 * JPA;
 * Java Commom Email; 
-* AJAX;
 * MySQL;
 
 ## Summary
