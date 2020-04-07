@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.vipguestlist.emailSender.configuration.EmailService;
 import com.vipguestlist.model.Guest;
 import com.vipguestlist.service.GuestService;
 
@@ -31,6 +32,8 @@ public class GuestController {
 	@PostMapping("save")
 	public ModelAndView save(Guest guest) {
 		service.save(guest);
+		EmailService emailService = new EmailService();
+		emailService.sendEmail(guest.getName(), guest.getEmail());
 		return new ModelAndView("redirect:guestlist");
 	}
 }
