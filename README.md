@@ -4,6 +4,11 @@
 
 This is a simple project, based on **_Alura's Spring Boot course_**, used to practice creating a Spring boot application!
 The **purpose** of this project is to add guests to a "Vip" list and inform them via email that they have been invited.
+
+<img src="https://github.com/igorgrv/VIPGuestList/blob/master/readmeImage/welcome.PNG?raw=true" width=600 height=250>
+
+<img src="https://github.com/igorgrv/VIPGuestList/blob/master/readmeImage/table.PNG?raw=true" width=600 height=300>
+
 ### Technologies/Database used
 * Spring Boot;
 * Spring MVC;
@@ -32,6 +37,7 @@ The **purpose** of this project is to add guests to a "Vip" list and inform them
 	* [Views - Thymeleaf](#views)
 4. [Spring Initializer](#initializer)
 5.  [Apache Commons Email](#email)
+6. [FATJAR/Running the application from a prompt command](#fatjar)
 ## <a name="boot"></a>Starting the project - Spring Boot
 ###  <a name="why"></a>Why to use Spring boot? 
 The main utility of **Spring Boot** is at:
@@ -55,6 +61,23 @@ The main utility of **Spring Boot** is at:
 		<artifactId>spring-boot-starter-web</artifactId>
 	</dependency>
 </dependencies>
+
+<!-- this build, it's used to "run" when the customer execute the .jar-->
+<build>
+	<plugins>
+		<plugin>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-maven-plugin</artifactId>
+			<executions>
+				<execution>
+					<goals>
+						<goal>repackage</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
+</build>
 ```
 ### <a name="jetty"></a>[optional] Changing the Server Container TomCat to Jetty
 ```xml
@@ -406,7 +429,6 @@ We're going to send an email, right after the guest has been registered!
 Server Configuration:
 ```java
 @SpringBootApplication
-@ComponentScan({"com.vipguestlist.emailSender.service"})
 public class EmailSenderApplication {
 
 	public static void main(String[] args) {
@@ -415,7 +437,7 @@ public class EmailSenderApplication {
 
 }
 ```
-EmailService:
+EmailService (into the same package of the Server Configuration):
 ```java
 @Service
 public class EmailService {
@@ -443,7 +465,7 @@ public class EmailService {
 Now, it's time to generate the **".jar"**! That way, it's possible to use the application in our main application, as a *`<dependency>`*.
 1. Open the **command prompt**;
 2. Using `cd/dir` search for the project folder;
-3. Write `mvn install` and wait to see if into the _target_ folder, were created the .jar, like **emailSender-0.0.1-SNAPSHOT.jar**
+3. Write `mvn install` and wait to see if into the _target_ folder, it has been added to the **emailSender-0.0.1-SNAPSHOT.jar**
 
 ### Adding the .jar into the main project
 * Open the pom.xml from the "vipguestlist" and added the code below:
@@ -460,8 +482,11 @@ Now, it's time to generate the **".jar"**! That way, it's possible to use the ap
 @PostMapping("save")
 public ModelAndView save(Guest guest) {
 	service.save(guest);
+	//It will call the Service from EmailService to send the email after has been saved
 	EmailService emailService = new EmailService();
 	emailService.sendEmail(guest.getName(), guest.getEmail());
 	return new ModelAndView("redirect:guestlist");
 }
 ```
+
+## <a name="fatjar"></a> FATJAR/Running the application from a prompt command
