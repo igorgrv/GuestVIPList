@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.vipguestlist.emailSender.configuration.EmailService;
+import com.vipguestlist.emailSender.emailSender.EmailService;
 import com.vipguestlist.model.Guest;
 import com.vipguestlist.service.GuestService;
 
