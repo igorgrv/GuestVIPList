@@ -12,7 +12,7 @@ The **purpose** of this project is to add guests to a "Vip" list and inform them
 ### Technologies/Database used
 * Spring Boot;
 * Spring MVC;
-* Spring DevTools &amp; LiveRealod;
+* Spring DevTools &amp; LiveRealod Plugin;
 * Spring Initializer;
 *  Thymeleaf;
 * JPA;
@@ -490,3 +490,5 @@ public ModelAndView save(Guest guest) {
 ```
 
 ## <a name="fatjar"></a> FATJAR/Running the application from a prompt command
+  
+To run the application, as if it were running inside "Eclipse", it is necessary to run the command `mvn package` inside the project folder. This way a .jar will be generated inside the project's target folder, which can be started using the command `java -jar vipguestlist-0.0.1-SNAPSHOT.jar`;
