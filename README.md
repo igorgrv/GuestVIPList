@@ -19,8 +19,10 @@ The **purpose** of this project is to add guests to a "Vip" list and inform them
 1. [Starting the project - Spring Boot](#boot)
 	* [Why to use Spring boot?](#why)
 	* [How to use? _without initializer_ ](#howto)
+	* [ [OPTIONAL] - Changing TomCat to Jetty](#jetty)
 	* [How to Configure/Run the Server](#configureserver)
 	* [How to Configure the JPA + MySQL](#configurejpa)
+	* [ [OPTIONAL] - Changing the server Port](#port)
 2.  [Spring DevTools + LiveReload Plugin](#devtools)
 3. [Creating the MVC](#mvc)
 	* [Entity](#entity)
@@ -54,7 +56,25 @@ The main utility of **Spring Boot** is at:
 	</dependency>
 </dependencies>
 ```
+### <a name="jetty"></a>[optional] Changing the Server Container TomCat to Jetty
+```xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+	<exclusions>
+		<exclusion>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+		</exclusion>
+	</exclusions>
+</dependency>
 
+<!-- Jetty Dependency -->
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-jetty</artifactId>
+</dependency>
+```
 ### <a name="configureserver"></a>How to Configure/Run the Server
 
 1. Create a package _(com.vipguestlist.configurations)_ into the _src/main/java_;
@@ -131,6 +151,21 @@ public class Configuration {
 	}
 }
 ```
+### <a name="port"></a>[optional] Changing the server Port
+* Just, add into the application.proporties `server.port=9000`
+```
+# Database
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost/viplist?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto = update
+spring.jpa.show-sql = true
+
+# Changing the server port
+server.port=9000
+```
+
 ## <a name="devtools"></a> Spring DevTools + LiveReload Plugin
 
 **Spring DevTools** is used to make updates automatically on the server, making refreshments faster, as it will only update what has been changed, not the entire application, known as "hot deploy";
